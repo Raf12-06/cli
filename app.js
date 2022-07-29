@@ -15,36 +15,38 @@ process.stdout.write('\x1B[3;15H');
 readline.emitKeypressEvents(process.stdin);
 if (process.stdin.isTTY) process.stdin.setRawMode(true);
 
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
 class FormMove {
 
     first = '\x1B[';
     second = '\x1B[';
     third = '\x1B[';
 
-    static next(currentPos) {
-        process.stdout.write('\x1B[' + 3 + ';' + 4 + 'H')
+    static next() {
+        process.stdout.write('\x1B[3;4H')
     }
 
-    static previous(currentPos) {
-        process.stdout.write('\x1B[' + 3 + ';' + 4 + 'H')
+    static previous() {
+        process.stdout.write('\x1B[5;20H')
     }
 }
 
 process.stdin.on('keypress', (chunk, key) => {
-
         switch (key.sequence) {
             case '\x1B[A':
-                FormMove.next(3);
+                FormMove.next();
                 break;
             case '\x1B[B':
-                FormMove.previous(4);
+                FormMove.previous();
                 break;
-            case 'x7F':
+            case '\x7F':
                 break;
             case '\x03':
                 process.exit();
-                break;
-            case '\r':
                 break;
         }
 });
