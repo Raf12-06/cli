@@ -10,7 +10,7 @@ console.log(`
 ├───────────────────────────────┤
 │ color:                        │
 └───────────────────────────────┘
-`)
+`);
 
 readline.emitKeypressEvents(process.stdin);
 if (process.stdin.isTTY) {
@@ -18,21 +18,22 @@ if (process.stdin.isTTY) {
     process.stdin.setEncoding('utf8');
 }
 
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-});
-
 class FormMove {
 
     currentField;
     fieldsPositions;
     fieldsKeys;
+    result = {};
 
     constructor(fieldsPositions) {
         this.fieldsPositions = fieldsPositions;
         this.fieldsKeys = Object.keys(fieldsPositions);
         this.currentField = this.fieldsKeys[0];
+
+        this.fieldsKeys.forEach((key) => {
+            this.result[key] = '';
+        })
+
         process.stdout.write(this.fieldsPositions[this.currentField]);
     }
 
@@ -41,6 +42,8 @@ class FormMove {
         const indexKey = this.fieldsKeys.indexOf(key);
         if (indexKey < this.fieldsKeys.length - 1) {
             this.currentField = this.fieldsKeys[indexKey + 1]
+        } else {
+            this.currentField = this.fieldsKeys[0];
         }
 
         process.stdout.write(this.fieldsPositions[this.currentField]);
@@ -55,6 +58,15 @@ class FormMove {
 
         process.stdout.write(this.fieldsPositions[this.currentField]);
     }
+
+    saveFieldEntry(key) {
+        const field = this.currentField;
+        this.result[field] += key;
+    }
+
+    getResult() {
+        console.log(this.result);
+    }
 }
 
 const formMover = new FormMove({
@@ -65,17 +77,27 @@ const formMover = new FormMove({
 });
 
 process.stdin.on('keypress', (chunk, key) => {
-        switch (key.sequence) {
-            case '\x1B[B':
-                formMover.next();
-                break;
-            case '\x1B[A':
-                formMover.previous();
-                break;
-            case '\x7F':
-                break;
-            case '\x03':
-                process.exit();
-                break;
-        }
+
+    process.stdout.write(key.sequence);
+
+    switch (key.sequence) {
+        case '\x1B[B':
+            formMover.next();
+            break;
+        case '\x1B[A':
+            formMover.previous();
+            break;
+        case '\r':
+            formMover.next();
+            break;
+        case '\x03':
+            process.exit();
+            break;
+        case 'q':
+            console.clear();
+            formMover.getResult();
+            break;
+        default:
+            formMover.saveFieldEntry(key.sequence);
+    }
 });
