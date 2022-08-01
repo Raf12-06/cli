@@ -12,8 +12,6 @@ console.log(`
 └───────────────────────────────┘
 `)
 
-process.stdout.write('\x1B[3;9H');
-
 readline.emitKeypressEvents(process.stdin);
 if (process.stdin.isTTY) {
     process.stdin.setRawMode(true);
@@ -35,6 +33,7 @@ class FormMove {
         this.fieldsPositions = fieldsPositions;
         this.fieldsKeys = Object.keys(fieldsPositions);
         this.currentField = this.fieldsKeys[0];
+        process.stdout.write(this.fieldsPositions[this.currentField]);
     }
 
     next() {
