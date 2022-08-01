@@ -1,5 +1,5 @@
 const readline = require('readline');
-const FormMover = require('./Form');
+const createNewCarForm =require('./Forms/CreatNewCar');
 
 readline.emitKeypressEvents(process.stdin);
 if (process.stdin.isTTY) {
@@ -7,23 +7,9 @@ if (process.stdin.isTTY) {
     process.stdin.setEncoding('utf8');
 }
 
-console.clear();
+async function start() {
+    const formResult = await createNewCarForm.startFormAction();
+    console.log(formResult)
+}
 
-console.log(`
-┌───────────────────────────────┐  ┌───────────────────────────────┐
-│  mark:                        │  │ horse power:                  │
-├───────────────────────────────┤  └───────────────────────────────┘
-│ model:                        │
-├───────────────────────────────┤
-│ color:                        │
-└───────────────────────────────┘
-`);
-
-const creatNewCarForm = new FormMover({
-    mark: '\x1B[3;9H',
-    model: '\x1B[5;9H',
-    color: '\x1B[7;9H',
-    horse_power: '\x1B[3;50H'
-});
-
-creatNewCarForm.startFormAction();
+start();
