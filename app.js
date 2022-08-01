@@ -2,16 +2,17 @@ const readline = require('readline');
 
 console.clear();
 
-// console.log(`
-// ┌───────────────────────────────┐
-// │  first:                       │
-// ├───────────────────────────────┤
-// │ second:                       │
-// ├───────────────────────────────┤
-// │  third:                       │
-// └───────────────────────────────┘
-// `)
-process.stdout.write('\x1B[3;15H');
+console.log(`
+┌───────────────────────────────┐  ┌───────────────────────────────┐
+│  mark:                        │  │ horse power:                  │
+├───────────────────────────────┤  └───────────────────────────────┘
+│ model:                        │
+├───────────────────────────────┤
+│ color:                        │
+└───────────────────────────────┘
+`)
+
+process.stdout.write('\x1B[3;9H');
 
 readline.emitKeypressEvents(process.stdin);
 if (process.stdin.isTTY) {
@@ -26,45 +27,51 @@ const rl = readline.createInterface({
 
 class FormMove {
 
-    first = '\x1B[';
-    second = '\x1B[';
-    third = '\x1B[';
+    currentField;
+    fieldsPositions;
+    fieldsKeys;
 
-    static async next() {
-        const pos = await this.getCursorPosition()
-        process.stdout.write(pos + '')
-        process.stdout.write('\x1B[3;4H')
+    constructor(fieldsPositions) {
+        this.fieldsPositions = fieldsPositions;
+        this.fieldsKeys = Object.keys(fieldsPositions);
+        this.currentField = this.fieldsKeys[0];
     }
 
-    static async previous() {
-        const pos = await this.getCursorPosition()
-        process.stdout.write(pos + '')
-        process.stdout.write('\x1B[5;20H')
+    next() {
+        const key = this.currentField;
+        const indexKey = this.fieldsKeys.indexOf(key);
+        if (indexKey < this.fieldsKeys.length - 1) {
+            this.currentField = this.fieldsKeys[indexKey + 1]
+        }
+
+        process.stdout.write(this.fieldsPositions[this.currentField]);
     }
 
-    static getCursorPosition() {
-        return new Promise((resolve) => {
-            const parse = () => {
-                const buf = process.stdin.read();
-                const str = JSON.stringify(buf);
-                const regex = /\[(.*)/g;
-                const xy = regex.exec(str)[0].replace(/\[|R"/g, '').split(';');
-                resolve({rows: xy[0], cols: xy[1]});
-            }
+    previous() {
+        const key = this.currentField;
+        const indexKey = this.fieldsKeys.indexOf(key);
+        if (indexKey > 0) {
+            this.currentField = this.fieldsKeys[indexKey - 1]
+        }
 
-            process.stdin.once('readable', parse);
-            process.stdout.write('\x1B[6n');
-        })
+        process.stdout.write(this.fieldsPositions[this.currentField]);
     }
 }
 
+const formMover = new FormMove({
+    mark: '\x1B[3;9H',
+    model: '\x1B[5;9H',
+    color: '\x1B[7;9H',
+    horse_power: '\x1B[3;50H'
+});
+
 process.stdin.on('keypress', (chunk, key) => {
         switch (key.sequence) {
-            case '\x1B[A':
-                FormMove.next();
-                break;
             case '\x1B[B':
-                FormMove.previous();
+                formMover.next();
+                break;
+            case '\x1B[A':
+                formMover.previous();
                 break;
             case '\x7F':
                 break;
