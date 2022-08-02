@@ -1,5 +1,7 @@
 /**
- * Навигация по форме и получение результата
+ * Конструктор формы
+ * - навигаяция по форме
+ * - получение результата заполненной формы
  */
 class Form {
 
@@ -56,12 +58,24 @@ class Form {
     getResult() {
         process.stdin.removeAllListeners();
         console.clear();
-        process.stdout.write('\x1b[0m');
         for (const value in this.result) {
             const str = this.result[value];
             this.result[value] = str.trim();
         }
+
         return this.result;
+    }
+
+    renderFieldBackGroundColor() {
+        for (let i = 0; i < this.fieldsKeys.length; i++) {
+            const field = this.fieldsKeys[i];
+            process.stdout.write(this.fieldsPositions[field]);
+            process.stdout.write('\x1B[0;30;47m                      ')
+        }
+    }
+
+    renderFormBackGroundColor() {
+
     }
 
     async startFormAction() {
@@ -69,10 +83,10 @@ class Form {
 
             console.clear();
             process.stdout.write(this.form);
+            this.renderFieldBackGroundColor();
             process.stdout.write(this.fieldsPositions[this.currentField]);
 
             process.stdin.on('keypress', (chunk, key) => {
-
                 process.stdout.write('\x1B[3;34m' + key.sequence);
 
                 switch (key.sequence) {
@@ -100,6 +114,7 @@ class Form {
                                 return this.next();
                             }
                         }
+                        process.stdout.write('\x1b[0m');
                         resolve(this.getResult());
                         break;
 
