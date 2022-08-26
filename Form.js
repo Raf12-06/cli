@@ -5,10 +5,10 @@
  */
 class Form {
 
-    form;
-    currentField;
-    fieldsPositions;
-    fieldsKeys;
+    #form;
+    #currentField;
+    #fieldsPositions;
+    #fieldsKeys;
     result = {};
 
     constructor(fieldsPositions, form) {
@@ -23,6 +23,9 @@ class Form {
         })
     }
 
+    /**
+     * Переключение на следующую координату, указанную в массиве fieldsPositions при создании формы
+     */
     next() {
         const key = this.currentField;
         const indexKey = this.fieldsKeys.indexOf(key);
@@ -35,6 +38,9 @@ class Form {
         process.stdout.write(this.fieldsPositions[this.currentField]);
     }
 
+    /**
+     * Переключение на предыдующу координату
+     */
     previous() {
         const key = this.currentField;
         const indexKey = this.fieldsKeys.indexOf(key);
@@ -45,16 +51,25 @@ class Form {
         process.stdout.write(this.fieldsPositions[this.currentField]);
     }
 
+    /**
+     * Сохранение ввода в соответствубщее поле обекта с результатом
+     */
     saveFieldEntry(key) {
         const field = this.currentField;
         this.result[field] += key;
     }
 
+    /**
+     * Очистка ввода в поле
+     */
     eraseField() {
         const field = this.currentField;
         this.result[field] = '              ';
     }
 
+    /**
+     * Получение результата заполнения поля
+     */
     getResult() {
         process.stdin.removeAllListeners();
         console.clear();
@@ -66,6 +81,9 @@ class Form {
         return this.result;
     }
 
+    /**
+     * Отрисовка фона поля формы
+     */
     renderFieldBackGroundColor() {
         for (let i = 0; i < this.fieldsKeys.length; i++) {
             const field = this.fieldsKeys[i];
@@ -74,10 +92,9 @@ class Form {
         }
     }
 
-    renderFormBackGroundColor() {
-
-    }
-
+    /**
+     * Основной метод, запускающий выполнение формы
+     */
     async startFormAction() {
         return new Promise((resolve) => {
 
@@ -87,6 +104,7 @@ class Form {
             process.stdout.write(this.fieldsPositions[this.currentField]);
 
             process.stdin.on('keypress', (chunk, key) => {
+
                 process.stdout.write('\x1B[3;34m' + key.sequence);
 
                 switch (key.sequence) {

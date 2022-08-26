@@ -1,5 +1,7 @@
 const readline = require('readline');
-const createNewCarForm =require('./Forms/CreatNewCar');
+const createNewCarForm = require('./Forms/CreatNewCar');
+const mainMenu = require('./Menus/Main');
+const newMan = require('./Forms/man');
 
 readline.emitKeypressEvents(process.stdin);
 if (process.stdin.isTTY) {
@@ -8,8 +10,8 @@ if (process.stdin.isTTY) {
 }
 
 async function start() {
-    const formResult = await createNewCarForm.startFormAction();
-    console.log(formResult)
+    // const formResult = await createNewCarForm.startFormAction();
+    const formResult = await newMan.startFormAction();
 }
 
 start();

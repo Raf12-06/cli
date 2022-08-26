@@ -1,6 +1,6 @@
-const FormMover = require("../Form");
+const Form = require("../Form");
 
-const creatNewCarForm = new FormMover({
+const creatNewCarForm = new Form({
     mark: '\x1B[3;37H',
     model: '\x1B[5;37H',
     color: '\x1B[7;37H',
